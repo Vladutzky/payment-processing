@@ -44,13 +44,14 @@ A robust and scalable payment processing system built using **Spring Boot** and 
 The Payment Processing System includes the following entities and their relationships:
 
 1. **Customer**
-    - `id` (Long, Primary Key)
-    - `name` (String)
-    - `email` (String)
-    - **Relationships:**
-      - `Customer` ↔️ `Invoice` – One-to-Many (a customer can have multiple invoices).
-      - `Customer` ↔️ `Transaction` – One-to-Many (a customer can have multiple transactions).
-      - `Customer` ↔️ `Payment` – One-to-Many (a customer can make multiple payments).
+
+   - `id` (Long, Primary Key)
+   - `name` (String)
+   - `email` (String)
+   - **Relationships:**
+     - `Customer` ↔️ `Invoice` – One-to-Many (a customer can have multiple invoices).
+     - `Customer` ↔️ `Transaction` – One-to-Many (a customer can have multiple transactions).
+     - `Customer` ↔️ `Payment` – One-to-Many (a customer can make multiple payments).
 
 2. **Merchant**
    - `id` (Long, Primary Key)
@@ -59,7 +60,6 @@ The Payment Processing System includes the following entities and their relation
    - **Relationships:**
      - `Merchant` ↔️ `Payment` – One-to-Many (a merchant can receive multiple payments).
      - `Merchant` ↔️ `Transaction` – One-to-Many (a merchant can be involved in multiple transactions).
-     
 3. **Invoice**
    - `id` (Long, Primary Key)
    - `totalAmount` (Double)
@@ -68,7 +68,6 @@ The Payment Processing System includes the following entities and their relation
      - `Invoice` ↔️ `Customer` – Many-to-One (an invoice is associated with one customer).
      - `Invoice` ↔️ `Payment` – One-to-Many (an invoice can have multiple payments).
      - `Invoice` ↔️ `Transaction` – One-to-Many (a transaction is linked to one invoice).
-     
 4. **Payment**
    - `id` (Long, Primary Key)
    - `payerName` (String)
@@ -81,13 +80,11 @@ The Payment Processing System includes the following entities and their relation
      - `Payment` ↔️ `PaymentMethod` – Many-to-One (a payment is made using one payment method).
      - `Payment` ↔️ `Customer` – Many-to-One (a payment is made by one customer).
      - `Payment` ↔️ `Transaction` – One-to-One (each payment has an associated transaction).
-     
 5. **PaymentMethod**
    - `id` (Long, Primary Key)
    - `methodName` (String)
    - **Relationships:**
      - `PaymentMethod` ↔️ `Payment` – One-to-Many (a payment method can be used in multiple payments).
-     
 6. **Transaction**
    - `id` (Long, Primary Key)
    - `transactionAmount` (Double)
@@ -102,9 +99,77 @@ The Payment Processing System includes the following entities and their relation
 
 ## 📊 Entity Relationship Diagram (ERD)
 
-```plaintext
+````plaintext
 [Customer] 1 --- * [Invoice] 1 --- * [Payment] 1 --- 1 [Transaction]
        |                  |                        |
        |                  |                        |
        *                  *                        1
   [Transaction]      [PaymentMethod]         [Merchant]
+  ## 🚀 Running the Application
+
+### Requirements:
+- Java 23
+- Maven 3.8+
+- IntelliJ IDEA (optional)
+
+### Steps to Run:
+```bash
+# Clone the repository
+git clone <repository-url>
+cd reservation-management-system
+
+# Run the application
+./mvnw spring-boot:run
+````
+
+### Access the Swagger Interface:
+
+- [Swagger UI](http://localhost:8080/swagger-ui/index.html)
+- [OpenAPI Docs](http://localhost:8080/v3/api-docs)
+
+---
+
+## 🧪 Testing
+
+Run unit tests using Maven:
+
+```bash
+./mvnw test
+```
+
+### Test Coverage:
+
+- ✅ `CustomerServiceImpl` – Fully tested
+- ✅ `MerchantServiceImpl` – Fully tested
+- ✅ `PaymentServiceImpl` – Fully tested
+- ✅ `PaymentMethodServiceImpl` – Fully tested
+- ✅ `InvoiceServiceImpl` – Fully tested
+- ✅ `TransactionServiceImpl` – Fully tested
+
+- ✅ `CustomerController` – Fully tested
+- ✅ `MerchantController` – Fully tested
+- ✅ `PaymentController` – Fully tested
+- ✅ `PaymentController` – Fully tested
+- ✅ `InvoiceController` – Fully tested
+- ✅ `TransactionController` – Fully tested
+
+---
+
+## 📚 Technologies Used
+
+- Java 23
+- Spring Boot 3.4.1
+- H2 Database (In-Memory)
+- Jakarta Validation
+- Maven
+- JUnit 5
+- Swagger 3.1.0
+
+---
+
+## 📌 Author
+
+- **Name:** Vlad Furdui
+- **Program:** Master's Degree in Software Engineering (1st Year)
+- **Faculty:** Faculty of Mathematics and Informatics, University of Bucharest
+- **Project for the course:** Web Programming using Java Technologies
