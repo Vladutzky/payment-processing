@@ -1,5 +1,6 @@
 package com.example.payment_processing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -18,7 +19,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-
+    @JsonIgnore // Prevent infinite loop
     private Customer customer;
 
     @ManyToOne
@@ -33,7 +34,6 @@ public class Transaction {
 
     @OneToOne
     @JoinColumn(name = "payment_id")
-
     private Payment payment;
 
     public Transaction() {}
@@ -48,6 +48,9 @@ public class Transaction {
 
     public Long getId() {
         return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Double getTransactionAmount() {

@@ -70,6 +70,12 @@
 			<version>2.2.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!--
           If you have other needs (e.g. security, devtools),
           add them here as well.

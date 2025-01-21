@@ -1,5 +1,7 @@
 package com.example.payment_processing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,11 +19,11 @@ public class Invoice {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
-
+    @JsonIgnore // Prevent infinite loop
     private Customer customer;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
-
+    @JsonIgnore // Prevent infinite loop
     private List<Payment> payments = new ArrayList<>();
 
     public Invoice() {}
@@ -34,6 +36,9 @@ public class Invoice {
 
     public Long getId() {
         return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Double getTotalAmount() {

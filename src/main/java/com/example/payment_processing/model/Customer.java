@@ -1,5 +1,7 @@
 package com.example.payment_processing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,9 @@ public class Customer {
 
     public void setInvoices(List<Invoice> invoices) {
         this.invoices = invoices;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<Transaction> getTransactions() {
