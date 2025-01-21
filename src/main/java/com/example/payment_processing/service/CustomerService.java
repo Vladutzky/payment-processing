@@ -2,6 +2,7 @@ package com.example.payment_processing.service;
 
 import com.example.payment_processing.model.Customer;
 import java.util.List;
+import java.util.Map;
 
 public interface CustomerService {
 
@@ -21,6 +22,7 @@ public interface CustomerService {
 
     List<Customer> getCustomersWithTransactions();
     Double getTotalSpendingByCustomerId(Long customerId);
+    Customer getTopSpendingCustomer();
 
     List<Customer> findCustomersByCriteria(String name, String email);
 }

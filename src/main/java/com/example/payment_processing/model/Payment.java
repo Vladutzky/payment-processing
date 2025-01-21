@@ -16,8 +16,9 @@ public class Payment {
     @NotNull
     private String payerName;
 
-    @Positive
+
     private Double amount;
+    private boolean refunded = false;
 
     private LocalDateTime paymentDate = LocalDateTime.now();
 
@@ -69,7 +70,13 @@ public class Payment {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
+    public boolean isRefunded() {
+        return refunded;
+    }
 
+    public void setRefunded(boolean refunded) {
+        this.refunded = refunded;
+    }
     public LocalDateTime getPaymentDate() {
         return paymentDate;
     }

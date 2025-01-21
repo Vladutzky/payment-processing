@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/merchants")
@@ -39,6 +40,10 @@ public class MerchantController {
         return ResponseEntity.ok(merchants);
     }
 
+    @GetMapping("/top-merchants")
+    public ResponseEntity<List<Map<String, Object>>> getTopMerchants() {
+        return ResponseEntity.ok(merchantService.getTopMerchants());
+    }
     @PutMapping("/{id}")
     public ResponseEntity<Merchant> updateMerchant(
             @PathVariable Long id,

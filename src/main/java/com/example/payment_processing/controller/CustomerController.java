@@ -26,6 +26,11 @@ public class CustomerController {
         Customer found = customerService.getCustomerById(id);
         return ResponseEntity.ok(found);
     }
+    @GetMapping("/top-spender")
+    public ResponseEntity<Customer> getTopSpendingCustomer() {
+        Customer topCustomer = customerService.getTopSpendingCustomer();
+        return ResponseEntity.ok(topCustomer);
+    }
 
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {

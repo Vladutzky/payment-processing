@@ -4,6 +4,7 @@ import com.example.payment_processing.model.Merchant;
 import com.example.payment_processing.dto.MerchantRevenueDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MerchantService {
 
@@ -14,6 +15,7 @@ public interface MerchantService {
     List<Merchant> getAllMerchants();
 
     Merchant updateMerchant(Long id, Merchant merchant);
+    List<Map<String, Object>> getTopMerchants();
 
     void deleteMerchant(Long id);
 

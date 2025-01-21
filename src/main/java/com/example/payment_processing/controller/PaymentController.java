@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -32,7 +33,17 @@ public class PaymentController {
         List<Payment> payments = paymentService.getAllPayments();
         return ResponseEntity.ok(payments);
     }
-
+    @GetMapping("/{customerId}/payment-method-usage")
+    public ResponseEntity<Map<String, Double>> getPaymentMethodUsagePercentage(@PathVariable Long customerId) {
+        Map<String, Double> usagePercentage = paymentService.getPaymentMethodUsagePercentage(customerId);
+        return ResponseEntity.ok(usagePercentage);
+    }
+    @PostMapping("/{id}/refund")
+    public ResponseEntity<Payment> refundPayment(@PathVariable Long id) {
+        paymentService.refundPayment(id);
+        Payment refundedPayment = paymentService.getPaymentById(id);
+        return ResponseEntity.ok(refundedPayment);
+    }
     @PutMapping("/{id}")
     public ResponseEntity<Payment> updatePayment(
             @PathVariable Long id,

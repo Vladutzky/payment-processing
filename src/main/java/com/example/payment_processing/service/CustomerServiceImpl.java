@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.payment_processing.model.Payment;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +51,21 @@ public class CustomerServiceImpl implements CustomerService {
         existing.setCustomerEmail(updatedCustomer.getCustomerEmail());
         return customerRepository.save(existing);
     }
+    @Override
+    public Customer getTopSpendingCustomer() {
+        List<Customer> customers = customerRepository.findAll();
+
+        return customers.stream()
+                .max(Comparator.comparingDouble(this::calculateTotalSpent))
+                .orElseThrow(() -> new RuntimeException("No customers found"));
+    }
+
+    private double calculateTotalSpent(Customer customer) {
+        return customer.getInvoices().stream()
+                .flatMap(invoice -> invoice.getPayments().stream())
+                .mapToDouble(Payment::getAmount)
+                .sum();
+    }
 
     @Override
     public void deleteCustomer(Long id) {
@@ -62,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .filter(customer -> !customer.getInvoices().isEmpty())
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public List<Customer> getCustomersWithTransactions() {

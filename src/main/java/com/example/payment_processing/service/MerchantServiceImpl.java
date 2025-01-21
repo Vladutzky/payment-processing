@@ -8,7 +8,10 @@ import com.example.payment_processing.repository.MerchantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MerchantServiceImpl implements MerchantService {
@@ -31,6 +34,18 @@ public class MerchantServiceImpl implements MerchantService {
     public List<Merchant> getAllMerchants() {
         return merchantRepository.findAll();
     }
+    @Override
+    public List<Map<String, Object>> getTopMerchants() {
+        List<Object[]> results = merchantRepository.findTopMerchants();
+        return results.stream().map(r -> {
+            Map<String, Object> merchantData = new HashMap<>();
+            merchantData.put("merchantId", r[0]);
+            merchantData.put("merchantName", r[1]);
+            merchantData.put("totalRevenue", r[2]);
+            return merchantData;
+        }).collect(Collectors.toList());
+    }
+
 
     @Override
     public Merchant updateMerchant(Long id, Merchant updatedMerchant) {
