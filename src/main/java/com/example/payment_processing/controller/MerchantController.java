@@ -3,6 +3,7 @@ package com.example.payment_processing.controller;
 import com.example.payment_processing.dto.MerchantRevenueDTO;
 import com.example.payment_processing.model.Merchant;
 import com.example.payment_processing.service.MerchantService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/merchants")
+@Tag(name = "MerchantController", description = "Manage merchants")
 public class MerchantController {
 
     @Autowired

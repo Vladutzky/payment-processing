@@ -1,7 +1,9 @@
 package com.example.payment_processing.dto;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.List;
+@Schema(name = "Merchant Revenue", description = "Data for creating or updating the merchant revenues")
 public class MerchantRevenueDTO {
 
     private Long merchantId;

@@ -1,5 +1,6 @@
 package com.example.payment_processing.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
+@Schema(name = "Payment", description = "Represents a payment entity in the system")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import com.example.payment_processing.model.Customer;
 import com.example.payment_processing.model.Invoice;
 import com.example.payment_processing.service.CustomerService;
 import com.example.payment_processing.service.InvoiceService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
+@Tag(name = "InvoiceController", description = "Manage invoice")
 public class InvoiceController {
 
     @Autowired

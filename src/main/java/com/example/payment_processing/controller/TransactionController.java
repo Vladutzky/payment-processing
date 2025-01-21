@@ -2,6 +2,7 @@ package com.example.payment_processing.controller;
 
 import com.example.payment_processing.model.Transaction;
 import com.example.payment_processing.service.TransactionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
+@Tag(name = "TransactionController", description = "Manage transactions")
 public class TransactionController {
 
     @Autowired

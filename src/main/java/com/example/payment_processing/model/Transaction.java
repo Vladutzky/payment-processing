@@ -1,12 +1,14 @@
 package com.example.payment_processing.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 
 @Entity
 @Table(name = "transactions")
+@Schema(name = "Transaction", description = "Represents a transaction entity in the system")
 public class Transaction {
 
     @Id

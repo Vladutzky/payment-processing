@@ -2,6 +2,7 @@ package com.example.payment_processing.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "invoices")
+@Schema(name = "Invoice", description = "Represents an invoice entity in the system")
 public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

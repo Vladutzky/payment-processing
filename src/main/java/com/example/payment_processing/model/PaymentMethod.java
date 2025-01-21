@@ -1,11 +1,13 @@
 package com.example.payment_processing.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "payment_methods")
+@Schema(name = "PaymentMethod", description = "Represents a payment method entity in the system")
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
