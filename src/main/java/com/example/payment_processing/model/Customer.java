@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -26,6 +28,15 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 
     private List<Transaction> transactions = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "customer_merchant",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "merchant_id")
+    )
+    private Set<Merchant> merchants = new HashSet<>();
+
 
     public Customer() {}
 

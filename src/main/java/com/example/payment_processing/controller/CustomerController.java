@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/customers")
+
 @Tag(name = "CustomerController", description = "Manage customers")
 public class CustomerController {
 

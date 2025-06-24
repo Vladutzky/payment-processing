@@ -3,7 +3,9 @@ package com.example.payment_processing.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "merchants")
@@ -18,6 +20,10 @@ public class Merchant {
 
     @OneToMany(mappedBy = "merchant", cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "merchants")
+    private Set<Customer> customers = new HashSet<>();
+
 
     public Merchant() {}
 
