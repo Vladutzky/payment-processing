@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="base :: head"></head>
+<body>
+<div th:replace="base :: navbar"></div>
+<div class="container mt-5">
+    <h1>Payment #[<span th:text="${payment.id}"></span>]</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Invoice</dt>
+        <dd class="col-sm-9" th:text="${payment.invoice.id}">11</dd>
+        <dt class="col-sm-3">Amount</dt>
+        <dd class="col-sm-9" th:text="${payment.amount}">50.00</dd>
+        <dt class="col-sm-3">Paid At</dt>
+        <dd class="col-sm-9"
+            th:text="${#temporals.format(payment.paymentDate,'yyyy-MM-dd HH:mm')}">2025-06-26 12:34</dd>
+        <dt class="col-sm-3">Payer</dt>
+        <dd class="col-sm-9" th:text="${payment.payerName}">alice</dd>
+        <dt class="col-sm-3">Merchant</dt>
+        <dd class="col-sm-9" th:text="${payment.merchant.merchantName}">ShopCo</dd>
+        <dt class="col-sm-3">Method</dt>
+        <dd class="col-sm-9" th:text="${payment.paymentMethod.methodName}">Credit Card</dd>
+        <dt class="col-sm-3">Customer</dt>
+        <dd class="col-sm-9" th:text="${payment.customer.customerName}">Acme Corp</dd>
+    </dl>
+    <a class="btn btn-secondary" th:href="@{/payments}">Back</a>
+    <a class="btn btn-primary"
+       th:href="@{/payments/{id}/edit(id=${payment.id})}">Edit</a>
+</div>
+<div th:replace="base :: scripts"></div>
+</body>
+</html>

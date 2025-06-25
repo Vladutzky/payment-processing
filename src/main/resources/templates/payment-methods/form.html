@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+
+    <!-- CREATE -->
+    <div th:if="${method.id} == null">
+        <h1>New Payment Method</h1>
+        <form th:action="@{/payment-methods}"
+              th:object="${method}"
+              method="post">
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text"
+                       th:field="*{methodName}"
+                       class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('methodName')}"
+                     th:errors="*{methodName}"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a class="btn btn-secondary" th:href="@{/payment-methods}">Cancel</a>
+        </form>
+    </div>
+
+    <!-- EDIT -->
+    <div th:if="${method.id} != null">
+        <h1>Edit Payment Method</h1>
+        <form th:action="@{/payment-methods/{id}(id=${method.id})}"
+              th:object="${method}"
+              method="post">
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text"
+                       th:field="*{methodName}"
+                       class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('methodName')}"
+                     th:errors="*{methodName}"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary" th:href="@{/payment-methods}">Cancel</a>
+        </form>
+    </div>
+
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="base :: head"></head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
 <body>
-<div th:replace="base :: navbar"></div>
+<div th:replace="~{base :: navbar}"></div>
 <div class="container mt-4">
     <h1>Customers</h1>
     <a class="btn btn-primary mb-3" th:href="@{/customers/new}">New Customer</a>
@@ -13,16 +13,19 @@
         <tbody>
         <tr th:each="c : ${customers}">
             <td th:text="${c.id}">1</td>
-            <td th:text="${c.name}">Name</td>
-            <td th:text="${c.email}">email@example.com</td>
+            <td th:text="${c.customerName}">Acme Corp</td>
+            <td th:text="${c.customerEmail}">sales@acme.com</td>
             <td>
                 <a th:href="@{|/customers/${c.id}|}" class="btn btn-sm btn-info">View</a>
                 <a th:href="@{|/customers/${c.id}/edit|}" class="btn btn-sm btn-warning">Edit</a>
+                <form th:action="@{|/customers/${c.id}/delete|}" method="post" style="display:inline">
+                    <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-<div th:replace="base :: scripts"></div>
+<div th:replace="~{base :: scripts}"></div>
 </body>
 </html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+
+    <!-- CREATE -->
+    <div th:if="${payment.id} == null">
+        <h1>New Payment</h1>
+        <form th:action="@{/payments}"
+              th:object="${payment}"
+              method="post">
+            <div class="mb-3">
+                <label class="form-label">Payer Name</label>
+                <input type="text" th:field="*{payerName}" class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('payerName')}"
+                     th:errors="*{payerName}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Amount</label>
+                <input type="number" step="0.01"
+                       th:field="*{amount}"
+                       class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('amount')}"
+                     th:errors="*{amount}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Invoice</label>
+                <select th:field="*{invoice.id}" class="form-select">
+                    <option th:each="inv : ${invoices}"
+                            th:value="${inv.id}"
+                            th:text="'#' + ${inv.id}">1</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Merchant</label>
+                <select th:field="*{merchant.id}" class="form-select">
+                    <option th:each="m : ${merchants}"
+                            th:value="${m.id}"
+                            th:text="${m.merchantName}">ShopCo</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Payment Method</label>
+                <select th:field="*{paymentMethod.id}" class="form-select">
+                    <option th:each="pm : ${paymentMethods}"
+                            th:value="${pm.id}"
+                            th:text="${pm.methodName}">Credit Card</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Customer</label>
+                <select th:field="*{customer.id}" class="form-select">
+                    <option th:each="c : ${customers}"
+                            th:value="${c.id}"
+                            th:text="${c.customerName}">Acme Corp</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a class="btn btn-secondary" th:href="@{/payments}">Cancel</a>
+        </form>
+    </div>
+
+    <!-- EDIT -->
+    <div th:if="${payment.id} != null">
+        <h1>Edit Payment</h1>
+        <form th:action="@{/payments/{id}(id=${payment.id})}"
+              th:object="${payment}"
+              method="post">
+            <!-- all the same fields as above… -->
+            <div class="mb-3">
+                <label class="form-label">Payer Name</label>
+                <input type="text" th:field="*{payerName}" class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('payerName')}"
+                     th:errors="*{payerName}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Amount</label>
+                <input type="number" step="0.01"
+                       th:field="*{amount}"
+                       class="form-control"/>
+                <div class="text-danger"
+                     th:if="${#fields.hasErrors('amount')}"
+                     th:errors="*{amount}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Invoice</label>
+                <select th:field="*{invoice.id}" class="form-select">
+                    <option th:each="inv : ${invoices}"
+                            th:value="${inv.id}"
+                            th:text="'#' + ${inv.id}">1</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Merchant</label>
+                <select th:field="*{merchant.id}" class="form-select">
+                    <option th:each="m : ${merchants}"
+                            th:value="${m.id}"
+                            th:text="${m.merchantName}">ShopCo</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Payment Method</label>
+                <select th:field="*{paymentMethod.id}" class="form-select">
+                    <option th:each="pm : ${paymentMethods}"
+                            th:value="${pm.id}"
+                            th:text="${pm.methodName}">Credit Card</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Customer</label>
+                <select th:field="*{customer.id}" class="form-select">
+                    <option th:each="c : ${customers}"
+                            th:value="${c.id}"
+                            th:text="${c.customerName}">Acme Corp</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary" th:href="@{/payments}">Cancel</a>
+        </form>
+    </div>
+
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

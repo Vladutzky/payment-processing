@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="base :: head"></head>
+<body>
+<div th:replace="base :: navbar"></div>
+<div class="container mt-5">
+    <h1>Payment Methods</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/payment-methods/new}">New Method</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- iterate methods, not "paymentMethods" or anything else -->
+        <tr th:each="method : ${methods}">
+            <!-- id is always present -->
+            <td th:text="${method.id}">1</td>
+            <!-- use the actual property name: methodName -->
+            <td th:text="${method.methodName}">Credit Card</td>
+            <td>
+                <a th:href="@{/payment-methods/{id}(id=${method.id})}"
+                   class="btn btn-sm btn-info">View</a>
+                <a th:href="@{/payment-methods/{id}/edit(id=${method.id})}"
+                   class="btn btn-sm btn-warning">Edit</a>
+                <a th:href="@{/payment-methods/{id}/delete(id=${method.id})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Delete this payment method?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="base :: scripts"></div>
+</body>
+</html>

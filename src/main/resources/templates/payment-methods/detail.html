@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="base :: head"></head>
+<body>
+<div th:replace="base :: navbar"></div>
+<div class="container mt-5">
+    <h1>Method #[<span th:text="${method.id}"></span>]</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <!-- again, property is methodName -->
+        <dd class="col-sm-9" th:text="${method.methodName}">Credit Card</dd>
+    </dl>
+    <a class="btn btn-secondary" th:href="@{/payment-methods}">Back</a>
+    <a class="btn btn-primary"
+       th:href="@{/payment-methods/{id}/edit(id=${method.id})}">Edit</a>
+</div>
+<div th:replace="base :: scripts"></div>
+</body>
+</html>

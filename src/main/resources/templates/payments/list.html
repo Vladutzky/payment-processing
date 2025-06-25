@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="base :: head"></head>
+<body>
+<div th:replace="base :: navbar"></div>
+<div class="container mt-5">
+    <h1>Payments</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/payments/new}">New Payment</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Invoice #</th>
+            <th>Amount</th>
+            <th>Paid At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="pay : ${payments}">
+            <td th:text="${pay.id}">1</td>
+            <td th:text="${pay.invoice.id}">11</td>
+            <td th:text="${pay.amount}">50.00</td>
+            <td th:text="${#temporals.format(pay.paymentDate,'yyyy-MM-dd HH:mm')}">2025-06-26 12:34</td>
+            <td>
+                <a class="btn btn-sm btn-info"
+                   th:href="@{/payments/{id}(id=${pay.id})}">View</a>
+                <a class="btn btn-sm btn-warning"
+                   th:href="@{/payments/{id}/edit(id=${pay.id})}">Edit</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{/payments/{id}/delete(id=${pay.id})}"
+                   onclick="return confirm('Delete this payment?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="base :: scripts"></div>
+</body>
+</html>

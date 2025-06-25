@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+
+<div class="container mt-5">
+    <h1>Merchants</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/merchants/new}">New Merchant</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${merchants}">
+            <td th:text="${m.id}">1</td>
+            <td th:text="${m.merchantName}">ShopCo</td>
+            <td th:text="${m.merchantEmail}">shop@example.com</td>
+            <td>
+                <a th:href="@{/merchants/{id}(id=${m.id})}" class="btn btn-sm btn-info">View</a>
+                <a th:href="@{/merchants/{id}/edit(id=${m.id})}" class="btn btn-sm btn-warning">Edit</a>
+                <a th:href="@{/merchants/{id}/delete(id=${m.id})}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Delete this merchant?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

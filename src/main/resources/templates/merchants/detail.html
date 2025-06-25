@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+  <h1>Merchant #[<span th:text="${merchant.id}"></span>]</h1>
+  <dl class="row">
+    <dt class="col-sm-3">Name</dt>
+    <dd class="col-sm-9" th:text="${merchant.merchantName}">ShopCo</dd>
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9" th:text="${merchant.merchantEmail}">shop@example.com</dd>
+  </dl>
+  <a class="btn btn-secondary" th:href="@{/merchants}">Back</a>
+  <a class="btn btn-primary"
+     th:href="@{/merchants/{id}/edit(id=${merchant.id})}">
+    Edit
+  </a>
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

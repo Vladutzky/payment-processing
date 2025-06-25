@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+    <h1>Transaction #[<span th:text="${transaction.id}"></span>]</h1>
+    <dl class="row">
+        <dt class="col-sm-3">Amount</dt>
+        <dd class="col-sm-9" th:text="${transaction.transactionAmount}">75.00</dd>
+        <dt class="col-sm-3">Timestamp</dt>
+        <dd class="col-sm-9"
+            th:text="${#temporals.format(transaction.transactionDate,'yyyy-MM-dd HH:mm')}">…</dd>
+    </dl>
+    <a class="btn btn-secondary" th:href="@{/transactions}">Back</a>
+    <a class="btn btn-primary"
+       th:href="@{/transactions/{id}/edit(id=${transaction.id})}">Edit</a>
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

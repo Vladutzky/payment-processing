@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+    <h1>Invoices</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/invoices/new}">New Invoice</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Issued At</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="inv : ${invoices}">
+            <td th:text="${inv.id}">1</td>
+            <td th:text="${inv.customer.customerName}">Acme Corp</td>
+            <td th:text="${inv.totalAmount}">123.45</td>
+            <td th:text="${#temporals.format(inv.issuedAt,'yyyy-MM-dd HH:mm')}">2025-06-01 10:00</td>
+            <td>
+                <a class="btn btn-sm btn-info"
+                   th:href="@{/invoices/{id}(id=${inv.id})}">View</a>
+                <a class="btn btn-sm btn-secondary"
+                   th:href="@{/invoices/{id}/edit(id=${inv.id})}">Edit</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{/invoices/{id}/delete(id=${inv.id})}"
+                   onclick="return confirm('Delete this invoice?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

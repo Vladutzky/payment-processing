@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{base :: head}"></head>
+<body>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-5">
+    <h1>Transactions</h1>
+    <a class="btn btn-primary mb-3" th:href="@{/transactions/new}">New Transaction</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Timestamp</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${transactions}">
+            <td th:text="${t.id}">1</td>
+            <td th:text="${t.transactionAmount}">75.00</td>
+            <td th:text="${#temporals.format(t.transactionDate,'yyyy-MM-dd HH:mm')}">…</td>
+            <td>
+                <a class="btn btn-sm btn-info"
+                   th:href="@{/transactions/{id}(id=${t.id})}">View</a>
+                <a class="btn btn-sm btn-secondary"
+                   th:href="@{/transactions/{id}/edit(id=${t.id})}">Edit</a>
+                <a class="btn btn-sm btn-danger"
+                   th:href="@{/transactions/{id}/delete(id=${t.id})}"
+                   onclick="return confirm('Delete?');">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:replace="~{base :: scripts}"></div>
+</body>
+</html>

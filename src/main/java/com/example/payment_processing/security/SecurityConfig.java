@@ -100,7 +100,7 @@ public class SecurityConfig {
     }
 
     /**
-     * BCrypt-based encoder for hashing passwords
+     * BCrypt-based encoder for ha  shing passwords
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
