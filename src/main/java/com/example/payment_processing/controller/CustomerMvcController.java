@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Locale;
+
 @Controller
 @RequestMapping("/customers")
 public class CustomerMvcController {
@@ -18,32 +21,78 @@ public class CustomerMvcController {
         this.customerService = customerService;
     }
 
-    // 1) LIST
+    // ——— LIST & SORT ——————————————————————————————————————————
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("customers", customerService.getAllCustomers());
+    public String list(
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model
+    ) {
+        List<Customer> list = customerService.getAllCustomersSorted(
+                sortField, sortDir.toUpperCase(Locale.ROOT)
+        );
+        model.addAttribute("customers", list);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
         return "customers/list";
     }
 
-    // 2) DETAIL
-    @GetMapping("/{id}")
+    // ——— FILTERS —————————————————————————————————————————————
+    @GetMapping("/with-invoices")
+    public String withInvoices(Model model) {
+        var list = customerService.getAllCustomersSorted("id", "ASC")
+                .stream()
+                .filter(c -> !c.getInvoices().isEmpty())
+                .toList();
+        model.addAttribute("customers", list);
+        model.addAttribute("title", "Customers WITH Invoices");
+        return "customers/list";
+    }
+
+    @GetMapping("/with-transactions")
+    public String withTransactions(Model model) {
+        var list = customerService.getAllCustomersSorted("id", "ASC")
+                .stream()
+                .filter(c -> !c.getTransactions().isEmpty())
+                .toList();
+        model.addAttribute("customers", list);
+        model.addAttribute("title", "Customers WITH Transactions");
+        return "customers/list";
+    }
+
+    @GetMapping("/top-spender")
+    public String topSpender(Model model) {
+        Customer top = customerService.getTopSpendingCustomer();
+        model.addAttribute("customers", List.of(top));
+        model.addAttribute("title", "Top Spending Customer");
+        return "customers/list";
+    }
+
+    // ——— DETAIL (with total spending) —————————————————————————
+    @GetMapping("/{id:\\d+}")
     public String detail(@PathVariable Long id, Model model) {
-        model.addAttribute("customer", customerService.getCustomerById(id));
+        Customer customer = customerService.getCustomerById(id);
+        model.addAttribute("customer", customer);
+        model.addAttribute(
+                "totalSpending",
+                customerService.getTotalSpendingByCustomerId(id)
+        );
         return "customers/detail";
     }
 
-    // 3) NEW FORM
+    // ——— CREATE ————————————————————————————————————————————————
     @GetMapping("/new")
     public String createForm(Model model) {
         model.addAttribute("customerRequest", new Customer());
         return "customers/form";
     }
 
-    // 4) CREATE
     @PostMapping
-    public String create(@Valid @ModelAttribute("customerRequest") Customer customerRequest,
-                         BindingResult binding,
-                         Model model) {
+    public String create(
+            @Valid @ModelAttribute("customerRequest") Customer customerRequest,
+            BindingResult binding
+    ) {
         if (binding.hasErrors()) {
             return "customers/form";
         }
@@ -51,18 +100,19 @@ public class CustomerMvcController {
         return "redirect:/customers";
     }
 
-    // 5) EDIT FORM
-    @GetMapping("/{id}/edit")
+    // ——— EDIT ————————————————————————————————————————————————
+    @GetMapping("/{id:\\d+}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         model.addAttribute("customerRequest", customerService.getCustomerById(id));
         return "customers/form";
     }
 
-    // 6) UPDATE
-    @PostMapping("/{id}")
-    public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute("customerRequest") Customer customerRequest,
-                         BindingResult binding) {
+    @PostMapping("/{id:\\d+}")
+    public String update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("customerRequest") Customer customerRequest,
+            BindingResult binding
+    ) {
         if (binding.hasErrors()) {
             return "customers/form";
         }
@@ -70,8 +120,8 @@ public class CustomerMvcController {
         return "redirect:/customers";
     }
 
-    // (optionally) 7) DELETE
-    @PostMapping("/{id}/delete")
+    // ——— DELETE ———————————————————————————————————————————————
+    @PostMapping("/{id:\\d+}/delete")
     public String delete(@PathVariable Long id) {
         customerService.deleteCustomer(id);
         return "redirect:/customers";

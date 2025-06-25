@@ -1,18 +1,59 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="base :: head"></head>
+<head th:replace="~{base :: head}"></head>
 <body>
-<div th:replace="base :: navbar"></div>
-<div class="container mt-5">
-    <h1>Payments</h1>
-    <a class="btn btn-primary mb-3" th:href="@{/payments/new}">New Payment</a>
+<div th:replace="~{base :: navbar}"></div>
+<div class="container mt-4">
+
+    <h1 th:text="${title} ?: 'Payments'">Payments</h1>
+
+    <!-- Optional merchant filter -->
+    <form class="row mb-3" th:action="@{/payments/by-merchant/__unused__}" method="get"
+          onsubmit="this.action='/payments/by-merchant/'+this.merchantId.value">
+        <div class="col-auto">
+            <select name="merchantId" class="form-select">
+                <option disabled selected>Filter by Merchant …</option>
+                <option th:each="m : ${merchants}"
+                        th:value="${m.id}"
+                        th:text="${m.merchantName}"></option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-secondary">Go</button>
+        </div>
+    </form>
+
     <table class="table">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Invoice #</th>
-            <th>Amount</th>
-            <th>Paid At</th>
+            <th>
+                <a th:href="@{/payments(sortField='id',sortDir=${reverseSortDir})}">
+                    ID
+                    <span th:if="${sortField=='id' and sortDir=='asc'}">↑</span>
+                    <span th:if="${sortField=='id' and sortDir=='desc'}">↓</span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/payments(sortField='invoice.id',sortDir=${reverseSortDir})}">
+                    Invoice#
+                    <span th:if="${sortField=='invoice.id' and sortDir=='asc'}">↑</span>
+                    <span th:if="${sortField=='invoice.id' and sortDir=='desc'}">↓</span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/payments(sortField='amount',sortDir=${reverseSortDir})}">
+                    Amount
+                    <span th:if="${sortField=='amount' and sortDir=='asc'}">↑</span>
+                    <span th:if="${sortField=='amount' and sortDir=='desc'}">↓</span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/payments(sortField='paymentDate',sortDir=${reverseSortDir})}">
+                    Paid At
+                    <span th:if="${sortField=='paymentDate' and sortDir=='asc'}">↑</span>
+                    <span th:if="${sortField=='paymentDate' and sortDir=='desc'}">↓</span>
+                </a>
+            </th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -21,7 +62,7 @@
             <td th:text="${pay.id}">1</td>
             <td th:text="${pay.invoice.id}">11</td>
             <td th:text="${pay.amount}">50.00</td>
-            <td th:text="${#temporals.format(pay.paymentDate,'yyyy-MM-dd HH:mm')}">2025-06-26 12:34</td>
+            <td th:text="${#temporals.format(pay.paymentDate,'yyyy-MM-dd HH:mm')}">…</td>
             <td>
                 <a class="btn btn-sm btn-info"
                    th:href="@{/payments/{id}(id=${pay.id})}">View</a>
@@ -34,7 +75,8 @@
         </tr>
         </tbody>
     </table>
+
 </div>
-<div th:replace="base :: scripts"></div>
+<div th:replace="~{base :: scripts}"></div>
 </body>
 </html>

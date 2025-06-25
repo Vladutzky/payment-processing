@@ -3,12 +3,59 @@
 <head th:replace="~{base :: head}"></head>
 <body>
 <div th:replace="~{base :: navbar}"></div>
+
 <div class="container mt-4">
-    <h1>Customers</h1>
-    <a class="btn btn-primary mb-3" th:href="@{/customers/new}">New Customer</a>
-    <table class="table">
+    <!-- Page Title -->
+    <h1 th:text="${title} ?: 'Customers'">Customers</h1>
+
+    <!-- Action Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <a class="btn btn-primary" th:href="@{/customers/new}">New Customer</a>
+            <a class="btn btn-outline-secondary" th:href="@{/customers/with-invoices}">With Invoices</a>
+            <a class="btn btn-outline-secondary" th:href="@{/customers/with-transactions}">With Transactions</a>
+            <a class="btn btn-outline-secondary" th:href="@{/customers/top-spender}">Top Spender</a>
+        </div>
+        <form class="d-flex" th:action="@{/customers/search}" method="get">
+            <input name="name" class="form-control me-2" type="search" placeholder="Name" aria-label="Name">
+            <input name="email" class="form-control me-2" type="search" placeholder="Email" aria-label="Email">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Customers Table -->
+    <table class="table table-striped">
         <thead>
-        <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
+        <tr>
+            <th>
+                <a th:href="@{/customers(sortField='id', sortDir=${reverseSortDir})}"
+                   th:classappend="${sortField=='id'} ? ' text-primary'">
+                    ID
+                    <span th:if="${sortField=='id'}"
+                          class="bi"
+                          th:classappend="${sortDir=='asc'} ? ' bi-caret-up-fill' : ' bi-caret-down-fill'"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/customers(sortField='customerName', sortDir=${reverseSortDir})}"
+                   th:classappend="${sortField=='customerName'} ? ' text-primary'">
+                    Name
+                    <span th:if="${sortField=='customerName'}"
+                          class="bi"
+                          th:classappend="${sortDir=='asc'} ? ' bi-caret-up-fill' : ' bi-caret-down-fill'"></span>
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/customers(sortField='customerEmail', sortDir=${reverseSortDir})}"
+                   th:classappend="${sortField=='customerEmail'} ? ' text-primary'">
+                    Email
+                    <span th:if="${sortField=='customerEmail'}"
+                          class="bi"
+                          th:classappend="${sortDir=='asc'} ? ' bi-caret-up-fill' : ' bi-caret-down-fill'"></span>
+                </a>
+            </th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
         <tr th:each="c : ${customers}">
@@ -26,6 +73,7 @@
         </tbody>
     </table>
 </div>
+
 <div th:replace="~{base :: scripts}"></div>
 </body>
 </html>

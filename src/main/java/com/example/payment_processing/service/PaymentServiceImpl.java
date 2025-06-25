@@ -1,12 +1,9 @@
 package com.example.payment_processing.service;
 
 import com.example.payment_processing.model.*;
-import com.example.payment_processing.repository.InvoiceRepository;
-import com.example.payment_processing.repository.PaymentRepository;
-import com.example.payment_processing.repository.TransactionRepository;
-import com.example.payment_processing.repository.CustomerRepository;
-import com.example.payment_processing.repository.PaymentMethodRepository;
+import com.example.payment_processing.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +16,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
 
@@ -33,69 +31,71 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment createPayment(Payment payment) {
-
-
-
+        // Lookup entities
         Customer customer = customerRepository.findById(payment.getCustomer().getId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
-        // Create Invoice
-        Invoice invoice = new Invoice();
-        invoice.setTotalAmount(payment.getAmount());
-        invoice.setIssuedAt(payment.getPaymentDate());
-        invoice.setCustomer(customer); // Optional, update as needed
-        invoiceRepository.save(invoice);
+                .orElseThrow(() -> new RuntimeException("Customer not found: " + payment.getCustomer().getId()));
+        Invoice invoice = invoiceRepository.findById(payment.getInvoice().getId())
+                .orElseThrow(() -> new RuntimeException("Invoice not found: " + payment.getInvoice().getId()));
+        Merchant merchant = payment.getMerchant();
+        PaymentMethod pm = payment.getPaymentMethod();
 
-        // Create Transaction
-        Transaction transaction = new Transaction();
-        transaction.setTransactionAmount(payment.getAmount());
-        transaction.setTransactionDate(payment.getPaymentDate());
-
-        transactionRepository.save(transaction);
-
-        // Link to Payment
+        // Persist the payment first to generate ID if needed
+        payment.setCustomer(customer);
         payment.setInvoice(invoice);
-        payment.setTransaction(transaction);
+        payment.setMerchant(merchant);
+        payment.setPaymentMethod(pm);
+        Payment saved = paymentRepository.save(payment);
 
+        // Create transaction record
+        Transaction txn = new Transaction();
+        txn.setTransactionAmount(saved.getAmount());
+        txn.setTransactionDate(saved.getPaymentDate());
+        txn.setCustomer(customer);
+        txn.setInvoice(invoice);
+        txn.setMerchant(merchant);
+        txn.setPayment(saved);
+        transactionRepository.save(txn);
 
-        return paymentRepository.save(payment);
+        // Link back
+        saved.setTransaction(txn);
+        return paymentRepository.save(saved);
     }
+
     @Override
     public void refundPayment(Long paymentId) {
-        // Find the original payment
-        Payment originalPayment = paymentRepository.findById(paymentId)
+        Payment original = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment not found: " + paymentId));
-
-        // Check if the payment is already refunded
-        if (originalPayment.isRefunded()) {
-            throw new RuntimeException("Payment has already been refunded.");
+        if (original.isRefunded()) {
+            throw new RuntimeException("Already refunded: " + paymentId);
         }
+        original.setRefunded(true);
+        paymentRepository.save(original);
 
-        // Mark the original payment as refunded
-        originalPayment.setRefunded(true);
-        paymentRepository.save(originalPayment);
+        Payment refund = new Payment();
+        refund.setPayerName(original.getPayerName());
+        refund.setAmount(-original.getAmount());
+        refund.setPaymentDate(LocalDateTime.now());
+        refund.setMerchant(original.getMerchant());
+        refund.setPaymentMethod(original.getPaymentMethod());
+        refund.setInvoice(original.getInvoice());
+        refund.setCustomer(original.getCustomer());
+        refund.setRefunded(false);
 
-        // Create a new payment with negative amount for refund
-        Payment refundPayment = new Payment();
-        refundPayment.setPayerName(originalPayment.getPayerName());
-        refundPayment.setAmount(-originalPayment.getAmount());
-        refundPayment.setPaymentDate(LocalDateTime.now());
-        refundPayment.setMerchant(originalPayment.getMerchant());
-        refundPayment.setPaymentMethod(originalPayment.getPaymentMethod());
-        refundPayment.setInvoice(originalPayment.getInvoice());
-        refundPayment.setRefunded(false); // Refund payments are not refundable
-
-        // Save the refund payment
-        paymentRepository.save(refundPayment);
+        paymentRepository.save(refund);
     }
-    public Map<String, Double> getPaymentMethodUsagePercentage(Long customerId) {
-        List<Object[]> results = paymentRepository.countPaymentsByMethodForCustomer(customerId);
-        long totalPayments = results.stream().mapToLong(r -> (long) r[1]).sum();
 
-        return results.stream().collect(Collectors.toMap(
-                r -> paymentMethodRepository.findById((Long) r[0]).get().getMethodName(),
-                r -> ((long) r[1] * 100.0) / totalPayments
+    @Override
+    public Map<String, Double> getPaymentMethodUsagePercentage(Long customerId) {
+        List<Object[]> counts = paymentRepository.countPaymentsByMethodForCustomer(customerId);
+        long total = counts.stream().mapToLong(r -> (Long) r[1]).sum();
+        return counts.stream().collect(Collectors.toMap(
+                r -> paymentMethodRepository.findById((Long) r[0])
+                        .map(PaymentMethod::getMethodName)
+                        .orElse("Unknown"),
+                r -> ((Long) r[1] * 100.0) / total
         ));
     }
+
     @Override
     public Payment getPaymentById(Long id) {
         return paymentRepository.findById(id)
@@ -108,11 +108,21 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public List<Payment> getAllPaymentsSorted(String sortField, String sortDir) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDir), sortField);
+        return paymentRepository.findAll(sort);
+    }
+
+    @Override
     public Payment updatePayment(Long id, Payment updatedPayment) {
         Payment existing = getPaymentById(id);
         existing.setPayerName(updatedPayment.getPayerName());
         existing.setAmount(updatedPayment.getAmount());
         existing.setPaymentDate(updatedPayment.getPaymentDate());
+        existing.setMerchant(updatedPayment.getMerchant());
+        existing.setPaymentMethod(updatedPayment.getPaymentMethod());
+        existing.setInvoice(updatedPayment.getInvoice());
+        existing.setCustomer(updatedPayment.getCustomer());
         return paymentRepository.save(existing);
     }
 
@@ -128,8 +138,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Double calculateTotalAmountForMerchant(Long merchantId) {
-        return getPaymentsByMerchant(merchantId)
-                .stream()
+        return getPaymentsByMerchant(merchantId).stream()
                 .mapToDouble(Payment::getAmount)
                 .sum();
     }

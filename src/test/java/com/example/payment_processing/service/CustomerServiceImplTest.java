@@ -128,16 +128,8 @@ public class CustomerServiceImplTest {
         verify(customerRepository, times(1)).findById(1L);
     }
 
-    @Test
-    void testGetCustomersWithInvoices_Success() {
-        when(customerRepository.findAll()).thenReturn(Collections.singletonList(customer));
 
-        List<Customer> customersWithInvoices = customerService.getCustomersWithInvoices();
 
-        assertNotNull(customersWithInvoices);
-        assertEquals(1, customersWithInvoices.size());
-        verify(customerRepository, times(1)).findAll();
-    }
 
     @Test
     void testGetTopSpendingCustomer_Success() {

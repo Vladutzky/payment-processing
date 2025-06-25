@@ -14,18 +14,22 @@
               method="post">
             <div class="mb-3">
                 <label class="form-label">Name</label>
-                <input type="text" th:field="*{customerName}" class="form-control"/>
+                <input type="text"
+                       th:field="*{customerName}"
+                       class="form-control"/>
                 <div class="text-danger" th:errors="*{customerName}"></div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" th:field="*{customerEmail}" class="form-control"/>
+                <input type="email"
+                       th:field="*{customerEmail}"
+                       class="form-control"/>
                 <div class="text-danger" th:errors="*{customerEmail}"></div>
             </div>
 
             <button type="submit" class="btn btn-primary">Create</button>
-            <a class="btn btn-secondary" th:href="@{/customers}">Cancel</a>
+            <a th:href="@{/customers}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 
@@ -37,18 +41,22 @@
               method="post">
             <div class="mb-3">
                 <label class="form-label">Name</label>
-                <input type="text" th:field="*{customerName}" class="form-control"/>
+                <input type="text"
+                       th:field="*{customerName}"
+                       class="form-control"/>
                 <div class="text-danger" th:errors="*{customerName}"></div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" th:field="*{customerEmail}" class="form-control"/>
+                <input type="email"
+                       th:field="*{customerEmail}"
+                       class="form-control"/>
                 <div class="text-danger" th:errors="*{customerEmail}"></div>
             </div>
 
             <button type="submit" class="btn btn-primary">Save</button>
-            <a class="btn btn-secondary" th:href="@{/customers}">Cancel</a>
+            <a th:href="@{/customers}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
 

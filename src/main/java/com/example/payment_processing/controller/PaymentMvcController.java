@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/payments")
 public class PaymentMvcController {
@@ -22,23 +25,71 @@ public class PaymentMvcController {
     private final PaymentMethodService paymentMethodService;
     private final CustomerService customerService;
 
-    public PaymentMvcController(PaymentService paymentService,
-                                InvoiceService invoiceService,
-                                MerchantService merchantService,
-                                PaymentMethodService paymentMethodService,
-                                CustomerService customerService) {
-        this.paymentService = paymentService;
-        this.invoiceService = invoiceService;
-        this.merchantService = merchantService;
+    public PaymentMvcController(
+            PaymentService paymentService,
+            InvoiceService invoiceService,
+            MerchantService merchantService,
+            PaymentMethodService paymentMethodService,
+            CustomerService customerService
+    ) {
+        this.paymentService       = paymentService;
+        this.invoiceService       = invoiceService;
+        this.merchantService      = merchantService;
         this.paymentMethodService = paymentMethodService;
-        this.customerService = customerService;
+        this.customerService      = customerService;
     }
 
+    // ——— MAIN LIST WITH SORTING —————————————————————————————————————————
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("payments", paymentService.getAllPayments());
+    public String list(
+            @RequestParam(defaultValue = "id")      String sortField,
+            @RequestParam(defaultValue = "asc")     String sortDir,
+            Model model
+    ) {
+        // load merchants for the filter dropdown
+        model.addAttribute("merchants", merchantService.getAllMerchants());
+
+        // fetch sorted payments
+        List<Payment> payments = paymentService.getAllPaymentsSorted(sortField, sortDir);
+        model.addAttribute("payments", payments);
+
+        // for updating the table header links
+        model.addAttribute("sortField",    sortField);
+        model.addAttribute("sortDir",      sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        model.addAttribute("title", "All Payments");
         return "payments/list";
     }
+
+    // ——— FILTER BY MERCHANT (still allows sorting) —————————————————————————
+    @GetMapping("/by-merchant/{merchantId}")
+    public String listByMerchant(
+            @PathVariable Long merchantId,
+            @RequestParam(defaultValue = "id")  String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model
+    ) {
+        // always populate dropdown
+        model.addAttribute("merchants", merchantService.getAllMerchants());
+        // start from the fully sorted list, then filter
+        List<Payment> sorted = paymentService.getAllPaymentsSorted(sortField, sortDir);
+        List<Payment> payments = sorted.stream()
+                .filter(p -> p.getMerchant() != null && p.getMerchant().getId().equals(merchantId))
+                .collect(Collectors.toList());
+        model.addAttribute("payments", payments);
+
+        model.addAttribute("sortField",    sortField);
+        model.addAttribute("sortDir",      sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        model.addAttribute("selectedMerchantId", merchantId);
+
+        String merchantName = merchantService.getMerchantById(merchantId).getMerchantName();
+        model.addAttribute("title", "Payments for " + merchantName);
+        return "payments/list";
+    }
+
+    // ——— CRUD ENDPOINTS ————————————————————————————————————————————————
 
     @GetMapping("/new")
     public String createForm(Model model) {
@@ -48,9 +99,11 @@ public class PaymentMvcController {
     }
 
     @PostMapping
-    public String create(@Valid @ModelAttribute("payment") Payment payment,
-                         BindingResult br,
-                         Model model) {
+    public String create(
+            @Valid @ModelAttribute("payment") Payment payment,
+            BindingResult br,
+            Model model
+    ) {
         if (br.hasErrors()) {
             loadFormCollections(model);
             return "payments/form";
@@ -73,10 +126,12 @@ public class PaymentMvcController {
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id,
-                         @Valid @ModelAttribute("payment") Payment payment,
-                         BindingResult br,
-                         Model model) {
+    public String update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("payment") Payment payment,
+            BindingResult br,
+            Model model
+    ) {
         if (br.hasErrors()) {
             loadFormCollections(model);
             return "payments/form";
@@ -91,13 +146,11 @@ public class PaymentMvcController {
         return "redirect:/payments";
     }
 
-    /**
-     * Helper to populate all dropdown lists needed by the form.
-     */
+    // ——— SHARED HELPER ————————————————————————————————————————————————
     private void loadFormCollections(Model model) {
-        model.addAttribute("invoices", invoiceService.getAllInvoices());
-        model.addAttribute("merchants", merchantService.getAllMerchants());
+        model.addAttribute("invoices",       invoiceService.getAllInvoices());
+        model.addAttribute("merchants",      merchantService.getAllMerchants());
         model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-        model.addAttribute("customers", customerService.getAllCustomers());
+        model.addAttribute("customers",      customerService.getAllCustomers());
     }
 }
